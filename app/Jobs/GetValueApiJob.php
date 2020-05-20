@@ -35,8 +35,13 @@ class GetValueApiJob implements ShouldQueue
      */
     public function handle(Request $request)
     {
-        $date = \Carbon\Carbon::createFromFormat('Y-m-d',$this->paymentdate)->format('d-m-Y');
-        $apiUrl = 'https://mindicador.cl/api/dolar/'.$date;
+        if (is_null($this->paymentdate)) {
+            $apiUrl = 'https://mindicador.cl/api/dolar/';
+        } else {
+            $date = \Carbon\Carbon::createFromFormat('Y-m-d',$this->paymentdate)->format('d-m-Y');
+            $apiUrl = 'https://mindicador.cl/api/dolar/'.$date;
+        }
+        
         $curl = curl_init($apiUrl);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $json = curl_exec($curl);
